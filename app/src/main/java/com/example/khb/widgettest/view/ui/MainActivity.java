@@ -72,4 +72,5 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     public void onLoadingFinished(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
 }
