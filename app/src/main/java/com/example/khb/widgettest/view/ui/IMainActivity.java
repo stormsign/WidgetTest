@@ -6,5 +6,5 @@ package com.example.khb.widgettest.view.ui;
 public interface IMainActivity {
     void onLoading(String msg);
     void setData(String data);
-    void onLoadingFinished(String msg);
+    void onLoadingFailed(String msg);
 }

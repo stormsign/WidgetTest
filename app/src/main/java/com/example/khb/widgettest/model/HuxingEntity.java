@@ -1,16 +1,8 @@
 package com.example.khb.widgettest.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by khb on 2016/5/11.
@@ -145,35 +137,35 @@ public class HuxingEntity  {
 
     public static final String BASE_URL = "http://app.miuhouse.com/app/";
 
-    private void retrofitPostRequest() throws JSONException {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        IHuxingEntity huxingBiz = retrofit.create(IHuxingEntity.class);
-        Map<String, String> map = new HashMap<>();
-        String md5 = md5String("3" + "866328028175394" + "1" + "hothz");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deviceType", "3")
-                .put("imei", "866328028175394")
-                .put("version_code", "1")
-                .put("id", "198317f9-7ade-4e2c-a7ec-d09cb3adaae8");
-        String json = jsonObject.toString();
-        map.put("md5", md5);
-        map.put("transData", json);
-        retrofit2.Call<String> call = huxingBiz.getHuxings(map);
-        call.enqueue(new retrofit2.Callback<String>() {
-            @Override
-            public void onResponse(retrofit2.Call<String> call, retrofit2.Response<String> response) {
-
-            }
-
-            @Override
-            public void onFailure(retrofit2.Call<String> call, Throwable t) {
-
-            }
-        });
-    }
+//    private void retrofitPostRequest() throws JSONException {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(BASE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        IHuxingEntity huxingBiz = retrofit.create(IHuxingEntity.class);
+//        Map<String, String> map = new HashMap<>();
+//        String md5 = md5String("3" + "866328028175394" + "1" + "hothz");
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("deviceType", "3")
+//                .put("imei", "866328028175394")
+//                .put("version_code", "1")
+//                .put("id", "198317f9-7ade-4e2c-a7ec-d09cb3adaae8");
+//        String json = jsonObject.toString();
+//        map.put("md5", md5);
+//        map.put("transData", json);
+//        retrofit2.Call<String> call = huxingBiz.getHuxings(map);
+//        call.enqueue(new retrofit2.Callback<String>() {
+//            @Override
+//            public void onResponse(retrofit2.Call<String> call, retrofit2.Response<String> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(retrofit2.Call<String> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 
 
 

@@ -1,5 +1,7 @@
 package com.example.khb.widgettest.presenter;
 
+import android.content.Context;
+
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.model.IUserEntity;
 import com.example.khb.widgettest.model.UserEntity;
@@ -21,8 +23,8 @@ public  class MainPresenter implements IMainPresenter{
     }
 
     @Override
-    public void performOnClick() {
-        iUser.getData(new OnLoadCallBack() {
+    public void performOnClick(Context context) {
+        iUser.getData(context, new OnLoadCallBack() {
 
             @Override
             public void onPreLoad(String msg) {
@@ -38,7 +40,7 @@ public  class MainPresenter implements IMainPresenter{
 
             @Override
             public void onLoadFailed(String msg) {
-                iMainActivity.onLoadingFinished(msg);
+                iMainActivity.onLoadingFailed(msg);
             }
 
         });

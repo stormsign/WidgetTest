@@ -1,7 +1,13 @@
 package com.example.khb.widgettest.model;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 
 import org.json.JSONException;
@@ -59,7 +65,7 @@ public class UserEntity implements IUserEntity {
     }
 
     @Override
-    public void getData(final OnLoadCallBack onLoadCallBack) {
+    public void getData(final Context context, final OnLoadCallBack onLoadCallBack) {
 
         onLoadCallBack.onPreLoad("loading.....");
 
@@ -69,8 +75,9 @@ public class UserEntity implements IUserEntity {
                 String data = null;
                 try {
                     Thread.sleep(1000);
-//                    requestPost();
-                    retrofitPostRequest();
+//                    okHttpPostRequest();
+//                    retrofitPostRequest();
+                    volleyPostRequest(context);
                     data = "user shadow";
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -101,7 +108,9 @@ public class UserEntity implements IUserEntity {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String BASE_URL = "http://app.miuhouse.com/app/";
-    private void requestPost() throws IOException, JSONException {
+
+//    okhttp3网络请求
+    private void okHttpPostRequest() throws IOException, JSONException {
         OkHttpClient client = new OkHttpClient();
         String md5 = md5String("3"+"866328028175394"+"1"+"hothz");
         JSONObject jsonObject = new JSONObject();
@@ -143,13 +152,13 @@ public class UserEntity implements IUserEntity {
         retrofit2.Call<HuxingBean> getHuxings(@Field("md5") String md5, @Field("transData") String json);
     }
 
+//    retrofit网络请求
     private void retrofitPostRequest() throws JSONException {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         IHuxingBiz huxingBiz = retrofit.create(IHuxingBiz.class);
-        Map<String, String> map = new HashMap<>();
         String md5 = md5String("3"+"866328028175394"+"1"+"hothz");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("deviceType", "3")
@@ -157,8 +166,6 @@ public class UserEntity implements IUserEntity {
                 .put("version_code", "1")
                 .put("id", "198317f9-7ade-4e2c-a7ec-d09cb3adaae8");
         String json = jsonObject.toString();
-        map.put("md5", md5);
-        map.put("transData", json);
         retrofit2.Call<HuxingBean> call = huxingBiz.getHuxings(md5, json);
         call.enqueue(new retrofit2.Callback<HuxingBean>() {
             @Override
@@ -174,6 +181,58 @@ public class UserEntity implements IUserEntity {
             }
         });
     }
+
+    private void volleyPostRequest(Context context){
+        String url = BASE_URL + "newHuxingInfo";
+
+        StringRequest request = new StringRequest(com.android.volley.Request.Method.POST, url, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("Log", "======Volley RESPONSE======\n" + response);
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                String md5 = md5String("3"+"866328028175394"+"1"+"hothz");
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("deviceType", "3")
+                            .put("imei", "866328028175394")
+                            .put("version_code", "1")
+                            .put("id", "198317f9-7ade-4e2c-a7ec-d09cb3adaae8");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String json = jsonObject.toString();
+                map.put("md5", md5);
+                map.put("transData", json);
+                return map;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(request);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private class HuxingBean {
         int code;
