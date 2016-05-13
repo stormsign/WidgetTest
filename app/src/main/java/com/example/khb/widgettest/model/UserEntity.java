@@ -8,14 +8,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.khb.widgettest.http.OkHttpStack;
+import com.example.khb.widgettest.http.VolleyManager;
 import com.example.khb.widgettest.listener.OnLoadCallBack;
+import com.example.khb.widgettest.utils.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +78,21 @@ public class UserEntity implements IUserEntity {
                     Thread.sleep(1000);
 //                    okHttpPostRequest();
 //                    retrofitPostRequest();
-                    volleyPostRequest(context);
+//                    volleyPostRequest(context);
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("id", "198317f9-7ade-4e2c-a7ec-d09cb3adaae8");
+                    VolleyManager.getInstance().sendGsonRequest("tag", BASE_URL + "newHuxingInfo", params, HuxingBean.class,
+                            new com.android.volley.Response.Listener<HuxingBean>() {
+                                @Override
+                                public void onResponse(HuxingBean response) {
+                                    Log.i("Log", "======Volley WRAPPED RESPONSE======\n" + response);
+                                }
+                            }, new com.android.volley.Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+
+                                }
+                            });
                     data = "user shadow";
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -112,7 +127,7 @@ public class UserEntity implements IUserEntity {
 //    okhttp3网络请求
     private void okHttpPostRequest() throws IOException, JSONException {
         OkHttpClient client = new OkHttpClient();
-        String md5 = md5String("3"+"866328028175394"+"1"+"hothz");
+        String md5 = Util.md5String("3" + "866328028175394" + "1" + "hothz");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("deviceType", "3")
                 .put("imei", "866328028175394")
@@ -124,7 +139,9 @@ public class UserEntity implements IUserEntity {
                 .add("transData", json)
                 .build();
 
-        Request request = new Request.Builder().url("http://app.miuhouse.com/app/"+"newHuxingInfo").post(body).build();
+        Request request = new Request.Builder()
+                .url("http://app.miuhouse.com/app/"+"newHuxingInfo")
+                .post(body).build();
 
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
@@ -135,10 +152,10 @@ public class UserEntity implements IUserEntity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String strResponse = response.body().string();
-                    Log.i("Log", "=====OKHTTP Exception=====\n"+strResponse);
-                }else {
+                    Log.i("Log", "=====OKHTTP Exception=====\n" + strResponse);
+                } else {
                     throw new IOException("===Unexpected code===" + response);
                 }
             }
@@ -159,7 +176,7 @@ public class UserEntity implements IUserEntity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         IHuxingBiz huxingBiz = retrofit.create(IHuxingBiz.class);
-        String md5 = md5String("3"+"866328028175394"+"1"+"hothz");
+        String md5 = Util.md5String("3" + "866328028175394" + "1" + "hothz");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("deviceType", "3")
                 .put("imei", "866328028175394")
@@ -199,7 +216,7 @@ public class UserEntity implements IUserEntity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> map = new HashMap<>();
-                String md5 = md5String("3"+"866328028175394"+"1"+"hothz");
+                String md5 = Util.md5String("3" + "866328028175394" + "1" + "hothz");
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("deviceType", "3")
@@ -215,7 +232,8 @@ public class UserEntity implements IUserEntity {
                 return map;
             }
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        //使用了以OkHttp作为实现的HttpStack
+        RequestQueue requestQueue = Volley.newRequestQueue(context, new OkHttpStack(new OkHttpClient()));
         requestQueue.add(request);
     }
 
@@ -267,36 +285,9 @@ public class UserEntity implements IUserEntity {
 
 
 
-    /**
-     * 对字符串进行MD5加密 输出：MD5加密后的大写16进制密文
-     *
-     * @param text
-     * @return
-     */
-    public static String md5String(String text) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        // 获取 摘要器
-        byte[] result = digest.digest(text.getBytes()); // 通过 摘要器对指定的数据进行加密，并返回到byte[]。
-        StringBuffer sb = new StringBuffer(); // 保存十六进制的密文
 
-        // 将加密后的数据 由byte(二进制)转化成Integer(十六进制)。
-        for (byte b : result) {
-            int code = b & 0xff;
-            String s = Integer.toHexString(code);
-            if (s.length() == 1) {
-                sb.append("0");
-                sb.append(s);
-            } else {
-                sb.append(s);
-            }
-        }
-        return sb.toString().toUpperCase(); // 返回数据加密后的十六进制密文
-    }
+
+
 
 
 }

@@ -23,7 +23,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-/**
+/**使用OkHttp实现Volley的传输层部分
  * Created by khb on 2016/5/12.
  */
 public class OkHttpStack implements HttpStack {
