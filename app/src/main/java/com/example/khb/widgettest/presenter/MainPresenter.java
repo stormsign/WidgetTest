@@ -1,11 +1,14 @@
 package com.example.khb.widgettest.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.model.IUserEntity;
 import com.example.khb.widgettest.model.UserEntity;
 import com.example.khb.widgettest.view.ui.IMainActivity;
+
+import okhttp3.Response;
 
 public  class MainPresenter implements IMainPresenter{
 
@@ -24,6 +27,24 @@ public  class MainPresenter implements IMainPresenter{
 
     @Override
     public void performOnClick(Context context) {
+        iUser.sendData(context, new OnLoadCallBack() {
+            @Override
+            public void onPreLoad(String msg) {
+
+            }
+
+            @Override
+            public void onLoadSuccess(Object data) {
+                Response response = (Response)data;
+                Log.i("TAG", "------- RESPONSE 2 ----------\n" + response.body().toString());
+            }
+
+            @Override
+            public void onLoadFailed(String msg) {
+                Log.i("TAG", "====== STOP UPLOADING " + System.currentTimeMillis() + " =======");
+            }
+        });
+
         iUser.getData(context, new OnLoadCallBack() {
 
             @Override
