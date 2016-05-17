@@ -10,6 +10,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.khb.widgettest.http.OkHttpStack;
 import com.example.khb.widgettest.http.VolleyManager;
+import com.example.khb.widgettest.http.request.UploadRequest;
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.utils.Util;
 
@@ -66,6 +67,32 @@ public class UserEntity implements IUserEntity {
     }
 
     @Override
+    public void sendData(final Context context, final OnLoadCallBack onLoadCallBack) {
+        new Thread(new Runnable() {
+            String data = null;
+            @Override
+            public void run() {
+                String base64String = null;
+                try {
+                    base64String = com.example.khb.widgettest.utils.Base64.encode(
+                            Util.Bitmap2Bytes(Util.createImageThumbnail(
+                                    context,
+                                    "/storage/emulated/0/DCIM/Screenshots/Screenshot_2016-05-16-18-12-52.png",
+                                    800)));
+
+                    String fileName = "/storage/emulated/0/DCIM/Screenshots/Screenshot_2016-05-16-18-12-52.png";
+                    String folder = "bbs";
+                    Log.i("TAG", "==== uploading start " + System.currentTimeMillis() + " ====");
+                    UploadRequest.getInstance(context).getParams(base64String, fileName, folder).execute(onLoadCallBack);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+    @Override
     public void getData(final Context context, final OnLoadCallBack onLoadCallBack) {
 
         onLoadCallBack.onPreLoad("loading.....");
@@ -79,7 +106,7 @@ public class UserEntity implements IUserEntity {
 //                    okHttpPostRequest();
 //                    retrofitPostRequest();
 //                    volleyPostRequest(context);
-                    Map<String, Object> params = new HashMap<String, Object>();
+                    Map<String, Object> params = new HashMap<>();
                     params.put("id", "198317f9-7ade-4e2c-a7ec-d09cb3adaae8");
                     VolleyManager.getInstance().sendGsonRequest("tag", BASE_URL + "newHuxingInfo", params, HuxingBean.class,
                             new com.android.volley.Response.Listener<HuxingBean>() {
@@ -93,6 +120,7 @@ public class UserEntity implements IUserEntity {
 
                                 }
                             });
+//                    VolleyManager.getInstance().cancel("tag");
                     data = "user shadow";
                 } catch (Exception e) {
                     e.printStackTrace();
