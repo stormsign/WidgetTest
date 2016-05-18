@@ -1,7 +1,6 @@
 package com.example.khb.widgettest.presenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.model.IUserEntity;
@@ -36,12 +35,10 @@ public  class MainPresenter implements IMainPresenter{
             @Override
             public void onLoadSuccess(Object data) {
                 Response response = (Response)data;
-                Log.i("TAG", "------- RESPONSE 2 ----------\n" + response.body().toString());
             }
 
             @Override
             public void onLoadFailed(String msg) {
-                Log.i("TAG", "====== STOP UPLOADING " + System.currentTimeMillis() + " =======");
             }
         });
 

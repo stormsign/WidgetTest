@@ -107,7 +107,7 @@ public class Util {
         // thb_bitmap.recycle();
         // 生成缩放后的图片文件
         // saveImageToSD(null, thumbfilePath, thb_bitmap, quality);
-        return thb_bitmap;
+        return cur_bitmap;
     }
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
