@@ -4,22 +4,27 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.khb.widgettest.application.App;
+import com.example.khb.widgettest.http.listener.ProgressListener;
+import com.example.khb.widgettest.http.requestbody.ProgressRequestBody;
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.utils.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/**
+/** 上传文件的请求
  * Created by khb on 2016/5/17.
  */
 public class UploadRequest {
@@ -28,7 +33,8 @@ public class UploadRequest {
     private final OkHttpClient client;
     private final JSONObject jsonObject;
     private final String md5;
-    private MultipartBody body;
+    private RequestBody body;
+    private ProgressRequestBody progressBody;
 
     private UploadRequest(Context context) {
         this.context = context;
@@ -58,28 +64,47 @@ public class UploadRequest {
         return Holder.INSTANCE;
     }
 
+    private String fileName;
+
     public UploadRequest getParams(String base64String, String fileName, String folder) throws JSONException {
         jsonObject.put("base64String", base64String);
         jsonObject.put("fileName", fileName);
         jsonObject.put("folder", folder);
+        this.fileName = fileName;
         return this;
     }
 
     private void getBody(){
         String json = jsonObject.toString();
+//        body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+//                .addFormDataPart("md5", md5)
+//                .addFormDataPart("transData", json)
+//                .build();
+        File file = new File(fileName);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
         body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("md5", md5)
-                .addFormDataPart("transData", json)
+//                .addFormDataPart("name", "img")
+                .addFormDataPart("filename", file.getName(), fileBody)
                 .build();
+        progressBody = new ProgressRequestBody(body, new ProgressListener() {
+            @Override
+            public void onProgress(long bytesRead, long totalBytes, boolean done) {
+                Log.i("TAG", "========== " + bytesRead + " / " + totalBytes + " =========");
+            }
+        });
     }
+
+    private String imgUrl = "http://img.miuhouse.com/upload/images";
 
     public void execute(final OnLoadCallBack onLoadCallBack) throws IOException {
         String url = "http://upload.miuhouse.com/app/uploadImg";
         getBody();
         Request request = new Request.Builder()
-                .url(url)
-                .post(body)
+//                .url(url)
+                .url(imgUrl)
+                .post(progressBody)
                 .build();
+
 
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
