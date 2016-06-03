@@ -5,16 +5,17 @@ import android.content.Context;
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.model.IUserEntity;
 import com.example.khb.widgettest.model.UserEntity;
-import com.example.khb.widgettest.view.ui.IMainActivity;
+import com.example.khb.widgettest.presenter.impl.ITestPresenter;
+import com.example.khb.widgettest.view.ui.ITestActivity;
 
 import okhttp3.Response;
 
-public  class MainPresenter implements IMainPresenter{
+public  class TestPresenter implements ITestPresenter {
 
-    private IMainActivity iMainActivity;
+    private ITestActivity iMainActivity;
     private IUserEntity iUser;
 
-    public MainPresenter (IMainActivity iMainActivity){
+    public TestPresenter(ITestActivity iMainActivity){
         this.iMainActivity = iMainActivity;
         iUser = new UserEntity();
     }

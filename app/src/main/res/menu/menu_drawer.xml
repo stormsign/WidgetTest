@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item android:id="@+id/drawer_nav_one"
+            android:icon="@android:drawable/ic_dialog_email"
+            android:title="Message"
+            />
+
+        <item android:id="@+id/drawer_nav_two"
+            android:icon="@android:drawable/ic_dialog_map"
+            android:title="Map"/>
+
+        <item android:id="@+id/drawer_nav_three"
+            android:icon="@android:drawable/ic_dialog_alert"
+            android:title="Alert"/>
+
+        <item android:id="@+id/drawer_nav_four"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="Info"/>
+
+    </group>
+
+</menu>

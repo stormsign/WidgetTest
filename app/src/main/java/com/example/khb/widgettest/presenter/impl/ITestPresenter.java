@@ -1,11 +1,11 @@
-package com.example.khb.widgettest.presenter;
+package com.example.khb.widgettest.presenter.impl;
 
 import android.content.Context;
 
 /**
  * Created by khb on 2016/5/10.
  */
-public interface IMainPresenter  {
+public interface ITestPresenter {
     void onCreate();
     void performOnClick(Context context);
 }
