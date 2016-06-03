@@ -21,17 +21,14 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar title;
     private ImageView mIvUserHead;
 
-//    private TestPresenter mainPresenter;
     private TextView mTvUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        mainPresenter = new TestPresenter(this);
         initTitle();
         initView();
-//        mainPresenter.checkLogin();
     }
 
     private void initTitle(){
