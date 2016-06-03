@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mIvUserHead;
 
     private TextView mTvUserName;
-
+//    urlPath = "http://cloud.miuhouse.com/app/" + "crawNews";
+//    map.put("cityId", 59);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
