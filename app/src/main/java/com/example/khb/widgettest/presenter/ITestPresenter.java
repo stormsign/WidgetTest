@@ -1,4 +1,4 @@
-package com.example.khb.widgettest.presenter.impl;
+package com.example.khb.widgettest.presenter;
 
 import android.content.Context;
 

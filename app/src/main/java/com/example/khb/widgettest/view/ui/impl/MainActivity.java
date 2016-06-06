@@ -4,17 +4,28 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.khb.widgettest.R;
+import com.example.khb.widgettest.presenter.IMainPresenter;
+import com.example.khb.widgettest.presenter.impl.MainPresenter;
+import com.example.khb.widgettest.view.ui.IMainActivity;
+import com.example.khb.widgettest.view.ui.adapter.NewsAdapter;
 import com.example.khb.widgettest.view.widget.StatusCompat;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements IMainActivity, SwipeRefreshLayout.OnRefreshListener {
 
     private DrawerLayout drawer;
     private NavigationView mNavigationView;
@@ -22,14 +33,20 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mIvUserHead;
 
     private TextView mTvUserName;
-//    urlPath = "http://cloud.miuhouse.com/app/" + "crawNews";
+    private RecyclerView list;
+
+    private IMainPresenter iMainPresenter;
+    private SwipeRefreshLayout refresh;
+
+    //    urlPath = "http://cloud.miuhouse.com/app/" + "crawNews";
 //    map.put("cityId", 59);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initTitle();
-        initView();
+        iMainPresenter = new MainPresenter(this);
+        iMainPresenter.initialize();
+        iMainPresenter.getList(1);
     }
 
     private void initTitle(){
@@ -42,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initView() {
+    private void initNavigation() {
         mIvUserHead = (ImageView) findViewById(R.id.iv_user_head);
         mTvUserName = (TextView) findViewById(R.id.tv_user_name);
-//        Glide.with(this).load(R.mipmap.ic_person_outline_white_48dp).placeholder(R.mipmap.ic_person_outline_white_48dp).into(mIvUserHead);
+        Glide.with(this).load(R.mipmap.ic_person_outline_white_48dp).placeholder(R.mipmap.ic_person_outline_white_48dp).into(mIvUserHead);
         mTvUserName.setText("--");
     }
 
@@ -64,6 +81,30 @@ public class MainActivity extends AppCompatActivity {
             return  true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void getView() {
+        initTitle();
+        initNavigation();
+        refresh = (SwipeRefreshLayout) findViewById(R.id.refresh);
+        refresh.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void initLists() {
+        list = (RecyclerView) findViewById(R.id.list);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        List<String> list = new ArrayList<>();
+        list.add("1111111111111111111122222222");
+        list.add("2222222222222222222222222222");
+        NewsAdapter adapter = new NewsAdapter(this, list);
+        this.list.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh.setRefreshing(false);
     }
 
 //    @Override

@@ -1,11 +1,11 @@
-package com.example.khb.widgettest.presenter;
+package com.example.khb.widgettest.presenter.impl;
 
 import android.content.Context;
 
 import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.model.IUserEntity;
 import com.example.khb.widgettest.model.UserEntity;
-import com.example.khb.widgettest.presenter.impl.ITestPresenter;
+import com.example.khb.widgettest.presenter.ITestPresenter;
 import com.example.khb.widgettest.view.ui.ITestActivity;
 
 import okhttp3.Response;

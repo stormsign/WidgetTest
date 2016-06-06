@@ -7,7 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.khb.widgettest.R;
-import com.example.khb.widgettest.presenter.TestPresenter;
+import com.example.khb.widgettest.presenter.impl.TestPresenter;
 import com.example.khb.widgettest.view.ui.ITestActivity;
 
 public class TestActivity extends AppCompatActivity implements ITestActivity {
