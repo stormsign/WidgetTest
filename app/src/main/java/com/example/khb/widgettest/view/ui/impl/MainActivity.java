@@ -5,7 +5,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,16 +15,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.khb.widgettest.R;
+import com.example.khb.widgettest.interactor.NewsInteractor;
+import com.example.khb.widgettest.model.NewsEntity;
 import com.example.khb.widgettest.presenter.IMainPresenter;
 import com.example.khb.widgettest.presenter.impl.MainPresenter;
+import com.example.khb.widgettest.utils.L;
 import com.example.khb.widgettest.view.ui.IMainActivity;
 import com.example.khb.widgettest.view.ui.adapter.NewsAdapter;
+import com.example.khb.widgettest.view.ui.base.BaseActivity;
 import com.example.khb.widgettest.view.widget.StatusCompat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements IMainActivity, SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends BaseActivity implements IMainActivity, SwipeRefreshLayout.OnRefreshListener {
 
     private DrawerLayout drawer;
     private NavigationView mNavigationView;
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, Sw
 
     private IMainPresenter iMainPresenter;
     private SwipeRefreshLayout refresh;
+    private NewsAdapter adapter;
+    private List<NewsEntity> dataList;
 
     //    urlPath = "http://cloud.miuhouse.com/app/" + "crawNews";
 //    map.put("cityId", 59);
@@ -95,19 +100,43 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, Sw
     public void initLists() {
         list = (RecyclerView) findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(this));
-        List<String> list = new ArrayList<>();
-        list.add("1111111111111111111122222222");
-        list.add("2222222222222222222222222222");
-        NewsAdapter adapter = new NewsAdapter(this, list);
+        dataList = new ArrayList<>();
+        adapter = new NewsAdapter(this, dataList);
         this.list.setAdapter(adapter);
     }
 
     @Override
+    public void refresh(NewsInteractor.NewsBean data) {
+        if (null != data){
+            dataList.clear();
+            dataList.addAll(data.getNewsInfos());
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onRefresh() {
+        L.i("refreshing");
+//        refresh.setRefreshing(false);
+//        iMainPresenter.getList(1);
+    }
+
+    @Override
+    public void showLoading(String msg) {
+        refresh.post(new Runnable() {
+            @Override
+            public void run() {
+                refresh.setRefreshing(true);
+            }
+        });
+    }
+
+    @Override
+    public void hideLoading() {
         refresh.setRefreshing(false);
     }
 
-//    @Override
+    //    @Override
 //    public void showLoginDialog() {
 //        Toast.makeText(this, "23333333", Toast.LENGTH_SHORT).show();
 //    }

@@ -22,14 +22,26 @@ public class NewsInteractor implements INewsInteractor {
     public NewsInteractor(OnLoadCallBack mOnLoadCallBack){
         this.mOnLoadCallBack = mOnLoadCallBack;
     }
-
+    String url = "http://cloud.miuhouse.com/app/crawNews";
     @Override
     public void getNews(int page) {
+        if (null != mOnLoadCallBack){
+            mOnLoadCallBack.onPreLoad(null);
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("propertyId",4);
         params.put("page", 1);
         params.put("pageSize", 10);
-        VolleyManager.getInstance().sendGsonRequest("NEWS", BASE_URL + "news", params, NewsBean.class,
+        VolleyManager.getInstance().sendGsonRequest("NEWS",
+//                BASE_URL + "news",
+                url,
+                params,
+                NewsBean.class,
                 new Response.Listener<NewsBean>() {
                     @Override
                     public void onResponse(NewsBean response) {

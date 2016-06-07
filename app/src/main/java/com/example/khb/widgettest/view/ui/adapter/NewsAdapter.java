@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.khb.widgettest.R;
+import com.example.khb.widgettest.model.NewsEntity;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ import java.util.List;
  */
 public class NewsAdapter extends RecyclerView.Adapter{
     private Context context;
-    private List<String> list;
+    private List<NewsEntity> list;
 
-    public NewsAdapter(Context context, List<String> list){
+    public NewsAdapter(Context context, List<NewsEntity> list){
         this.context = context;
         this.list = list;
     }
@@ -39,7 +40,7 @@ public class NewsAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof NewsHolder){
-            String str = list.get(position);
+            String str = list.get(position).getTitle();
             NewsHolder newsholder = (NewsHolder)holder;
             newsholder.news.setText(str);
         }

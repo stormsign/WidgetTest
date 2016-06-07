@@ -30,16 +30,17 @@ public class MainPresenter implements IMainPresenter, OnLoadCallBack<NewsInterac
 
     @Override
     public void onPreLoad(String msg) {
-
+        iMainActivity.showLoading(msg);
     }
 
     @Override
     public void onLoadSuccess(NewsInteractor.NewsBean data) {
-
+        iMainActivity.hideLoading();
+        iMainActivity.refresh(data);
     }
 
     @Override
     public void onLoadFailed(String msg) {
-
+        iMainActivity.hideLoading();
     }
 }
