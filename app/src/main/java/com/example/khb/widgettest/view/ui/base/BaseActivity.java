@@ -3,13 +3,14 @@ package com.example.khb.widgettest.view.ui.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.example.khb.widgettest.view.widget.ViewOverrideManager;
 
 /**
  * Created by khb on 2016/6/7.
  */
-public class BaseActivity extends AppCompatActivity implements BaseView{
+public abstract class BaseActivity extends AppCompatActivity implements BaseView{
 
     private Context context = null;
     private ViewOverrideManager overrideManager;
@@ -17,9 +18,18 @@ public class BaseActivity extends AppCompatActivity implements BaseView{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(getContentLayoutId());
         context = this;
-        overrideManager = new ViewOverrideManager(this);
+        init();
+        overrideManager = new ViewOverrideManager(getLoadingParentView());
     }
+
+    public abstract void init();
+
+    public abstract int getContentLayoutId();
+
+    public abstract View getLoadingParentView();
+
 
     @Override
     public void showLoading(String msg) {
@@ -33,7 +43,7 @@ public class BaseActivity extends AppCompatActivity implements BaseView{
 
     @Override
     public void hideLoading() {
-
+        overrideManager.restoreView();
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.example.khb.widgettest.view.ui.impl;
 
-import android.animation.ObjectAnimator;
-import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,7 +23,6 @@ import com.example.khb.widgettest.view.ui.IMainActivity;
 import com.example.khb.widgettest.view.ui.adapter.NewsAdapter;
 import com.example.khb.widgettest.view.ui.base.BaseActivity;
 import com.example.khb.widgettest.view.widget.StatusCompat;
-import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +46,28 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
 
     //    urlPath = "http://cloud.miuhouse.com/app/" + "crawNews";
 //    map.put("cityId", 59);
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public void init() {
         iMainPresenter = new MainPresenter(this);
         iMainPresenter.initialize();
         onRefresh();
+    }
+
+    @Override
+    public int getContentLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public View getLoadingParentView() {
+        return refresh;
     }
 
     @Override
@@ -96,47 +107,67 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
     public void getView() {
         initTitle();
         initNavigation();
-        CircleProgressBar circle = new CircleProgressBar(this);
-        circle.setColorSchemeResources(android.R.color.holo_orange_light);
-        circle.setCircleBackgroundEnabled(true);
-        RelativeLayout mainContainer = (RelativeLayout) findViewById(R.id.mainContainer);
-        RelativeLayout.LayoutParams params =  new RelativeLayout.LayoutParams(100, 100);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        circle.setLayoutParams(params);
+//        CircleProgressBar circle = new CircleProgressBar(this);
+//        circle.setColorSchemeResources(android.R.color.holo_orange_light);
+//        circle.setCircleBackgroundEnabled(true);
+//        RelativeLayout mainContainer = (RelativeLayout) findViewById(R.id.mainContainer);
+//        RelativeLayout.LayoutParams params =  new RelativeLayout.LayoutParams(96, 96);
+//        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+//        circle.setLayoutParams(params);
 
-        TextView tv = new TextView(this);
-        tv.setText("ttttttttttt");
-        tv.setTextColor(getResources().getColor(R.color.primary_material_dark));
-        tv.setLayoutParams(params);
-        mainContainer.addView(circle);
+//        TextView tv = new TextView(this);
+//        tv.setText("ttttttttttt");
+//        tv.setTextColor(getResources().getColor(R.color.primary_material_dark));
+//        tv.setLayoutParams(params);
+//        mainContainer.addView(circle);
         refresh = (SwipeRefreshLayout) findViewById(R.id.refresh);
         refresh.setColorSchemeResources(android.R.color.holo_orange_light);
         refresh.setOnRefreshListener(this);
 //        Animation animation = AnimationUtils.loadAnimation(this, R.anim.progress_scale);
 //        animation.setDuration(500);
 //        animation.setFillAfter(true);
-        ObjectAnimator oa = ObjectAnimator.ofInt(new WrapCircle(circle), "width", 100);
-        oa.setDuration(5000);
-        oa.start();
+//        final WrapCircle wrapCircle = new WrapCircle(circle);
+//        ObjectAnimator oa = ObjectAnimator.ofInt(wrapCircle, "", 0, 100);
+//        oa.setDuration(5000);
+//        oa.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                int value = (int)animation.getAnimatedValue();
+//                wrapCircle.setWidth(value);
+//                wrapCircle.setHeight(value);
+//            }
+//        });
+//        oa.start();
     }
 
-    public class WrapCircle{
-        private View view;
-        private int width;
-        public WrapCircle(View view){
-            this.view = view;
-        }
-
-        public int getWidth(){
-            return view.getLayoutParams().width;
-        }
-
-        public void setWidth(int width){
-            this.width = width;
-            view.getLayoutParams().width = this.width;
-            view.requestLayout();
-        }
-    }
+//    public class WrapCircle{
+//        private View view;
+//        private int width;
+//        private int height;
+//        public WrapCircle(View view){
+//            this.view = view;
+//        }
+//
+//        public int getWidth(){
+//            return view.getLayoutParams().width;
+//        }
+//
+//        public void setWidth(int width){
+//            this.width = width;
+//            view.getLayoutParams().width = width;
+//            view.requestLayout();
+//        }
+//
+//        public int getHeight(){
+//            return view.getLayoutParams().height;
+//        }
+//
+//        public void setHeight(int height){
+//            this.height = height;
+//            view.getLayoutParams().height = height;
+//            view.requestLayout();
+//        }
+//    }
 
     @Override
     public void initLists() {
@@ -185,21 +216,23 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
                 }
             });
         }
+//        super.showLoading("载入中");/**/
     }
 
     @Override
     public void hideLoading() {
         refresh.setRefreshing(false);
+//        super.hideLoading();
     }
 
-//    @Override
+    //    @Override
 //    public void showLoginDialog() {
 //        Toast.makeText(this, "23333333", Toast.LENGTH_SHORT).show();
 //    }
 
 //    @Override
 //    public void showUserInfo(User user) {
-//        Glide.with(this).load("http://pic4.nipic.com/20090821/2267807_180803075_2.jpg")
+//        Glide.with(this).loahttp://pic4.nipic.com/20090821/2267807_180803075_2.jpg")
 //                .placeholder(R.mipmap.ic_person_white_48dp)
 //                .error(R.mipmap.ic_person_white_48dp)
 //                .into(mIvUserHead);
