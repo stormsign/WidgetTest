@@ -22,6 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         context = this;
         init();
         overrideManager = new ViewOverrideManager(getLoadingParentView());
+        initViewsAndEvents();
     }
 
     public abstract void init();
@@ -30,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
     public abstract View getLoadingParentView();
 
+    public abstract void initViewsAndEvents();
 
     @Override
     public void showLoading(String msg) {

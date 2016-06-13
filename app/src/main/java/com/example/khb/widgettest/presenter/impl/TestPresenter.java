@@ -6,7 +6,7 @@ import com.example.khb.widgettest.listener.OnLoadCallBack;
 import com.example.khb.widgettest.model.IUserEntity;
 import com.example.khb.widgettest.model.UserEntity;
 import com.example.khb.widgettest.presenter.ITestPresenter;
-import com.example.khb.widgettest.view.ui.ITestActivity;
+import com.example.khb.widgettest.view.ui.activity.ITestActivity;
 
 import okhttp3.Response;
 

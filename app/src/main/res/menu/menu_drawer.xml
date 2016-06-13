@@ -4,7 +4,7 @@
 
         <item android:id="@+id/drawer_nav_one"
             android:icon="@android:drawable/ic_dialog_email"
-            android:title="Message"
+            android:title="News"
             />
 
         <item android:id="@+id/drawer_nav_two"

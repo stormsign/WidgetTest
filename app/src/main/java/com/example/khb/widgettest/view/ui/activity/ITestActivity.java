@@ -1,4 +1,4 @@
-package com.example.khb.widgettest.view.ui;
+package com.example.khb.widgettest.view.ui.activity;
 
 /**
  * Created by khb on 2016/5/10.

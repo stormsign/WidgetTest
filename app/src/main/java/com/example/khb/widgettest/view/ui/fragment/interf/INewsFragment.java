@@ -1,13 +1,12 @@
-package com.example.khb.widgettest.view.ui;
+package com.example.khb.widgettest.view.ui.fragment.interf;
 
 import com.example.khb.widgettest.interactor.NewsInteractor;
 import com.example.khb.widgettest.view.ui.base.BaseView;
 
 /**
- * Created by khb on 2016/6/3.
+ * Created by khb on 2016/6/13.
  */
-public interface IMainActivity extends BaseView{
-    void getView();
-    void initLists();
+public interface INewsFragment extends BaseView {
+    void initViews();
     void refresh(NewsInteractor.NewsBean data);
 }

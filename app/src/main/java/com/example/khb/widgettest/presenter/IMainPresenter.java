@@ -1,9 +1,11 @@
 package com.example.khb.widgettest.presenter;
 
+import android.support.v4.app.Fragment;
+
 /**
  * Created by khb on 2016/6/6.
  */
 public interface IMainPresenter {
     void initialize();
-    void getList(int page);
+    Fragment getFragments(int page);
 }

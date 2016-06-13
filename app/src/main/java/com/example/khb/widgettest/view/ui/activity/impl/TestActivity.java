@@ -1,4 +1,4 @@
-package com.example.khb.widgettest.view.ui.impl;
+package com.example.khb.widgettest.view.ui.activity.impl;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.example.khb.widgettest.R;
 import com.example.khb.widgettest.presenter.impl.TestPresenter;
-import com.example.khb.widgettest.view.ui.ITestActivity;
+import com.example.khb.widgettest.view.ui.activity.ITestActivity;
 
 public class TestActivity extends AppCompatActivity implements ITestActivity {
 

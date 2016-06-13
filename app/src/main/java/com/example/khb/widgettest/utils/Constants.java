@@ -14,4 +14,7 @@ public class Constants {
     public final static String APPKEY = "hothz";
     public static String IMEI_VALUE;
 
+    public static final int FRAGMENT_NEWS = 0;
+    public static final int FRAGMENT_MAP = 1;
+
 }

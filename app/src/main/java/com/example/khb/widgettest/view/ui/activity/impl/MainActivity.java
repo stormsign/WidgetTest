@@ -1,33 +1,37 @@
-package com.example.khb.widgettest.view.ui.impl;
+package com.example.khb.widgettest.view.ui.activity.impl;
 
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.khb.widgettest.R;
-import com.example.khb.widgettest.interactor.NewsInteractor;
 import com.example.khb.widgettest.model.NewsEntity;
 import com.example.khb.widgettest.presenter.IMainPresenter;
 import com.example.khb.widgettest.presenter.impl.MainPresenter;
-import com.example.khb.widgettest.view.ui.IMainActivity;
+import com.example.khb.widgettest.utils.Constants;
+import com.example.khb.widgettest.view.ui.activity.IMainActivity;
 import com.example.khb.widgettest.view.ui.adapter.NewsAdapter;
 import com.example.khb.widgettest.view.ui.base.BaseActivity;
+import com.example.khb.widgettest.view.ui.base.BaseFragment;
+import com.example.khb.widgettest.view.ui.fragment.MapFragment;
+import com.example.khb.widgettest.view.ui.fragment.NewsFragment;
 import com.example.khb.widgettest.view.widget.StatusCompat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements IMainActivity, SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends BaseActivity implements IMainActivity, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
     private NavigationView mNavigationView;
@@ -43,6 +47,11 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
     private List<NewsEntity> dataList;
 
     private int page;
+    private RelativeLayout mContainer;
+    private NewsFragment newsFragment;
+    private MapFragment mapFragment;
+
+    private List<BaseFragment> fragments;
 
     //    urlPath = "http://cloud.miuhouse.com/app/" + "crawNews";
 //    map.put("cityId", 59);
@@ -57,7 +66,6 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
     public void init() {
         iMainPresenter = new MainPresenter(this);
         iMainPresenter.initialize();
-        onRefresh();
     }
 
     @Override
@@ -86,6 +94,23 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void initViewsAndEvents() {
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setCheckedItem(R.id.drawer_nav_one);
+        newsFragment = (NewsFragment) iMainPresenter.getFragments(Constants.FRAGMENT_NEWS);
+        mapFragment = (MapFragment) iMainPresenter.getFragments(Constants.FRAGMENT_MAP);
+        fragments = new ArrayList<>();
+        fragments.add(newsFragment);
+        fragments.add(mapFragment);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, newsFragment, NewsFragment.class.getName())
+                .add(R.id.container, mapFragment, MapFragment.class.getName())
+                .hide(mapFragment)
+                .show(newsFragment)
+        .commit();
+    }
+
     private void initTitle(){
         drawer = (DrawerLayout) findViewById(R.id.drawer_main);
         mNavigationView = (NavigationView) findViewById(R.id.navigation);
@@ -107,6 +132,7 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
     public void getView() {
         initTitle();
         initNavigation();
+        mContainer = (RelativeLayout) findViewById(R.id.container);
 //        CircleProgressBar circle = new CircleProgressBar(this);
 //        circle.setColorSchemeResources(android.R.color.holo_orange_light);
 //        circle.setCircleBackgroundEnabled(true);
@@ -120,9 +146,6 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
 //        tv.setTextColor(getResources().getColor(R.color.primary_material_dark));
 //        tv.setLayoutParams(params);
 //        mainContainer.addView(circle);
-        refresh = (SwipeRefreshLayout) findViewById(R.id.refresh);
-        refresh.setColorSchemeResources(android.R.color.holo_orange_light);
-        refresh.setOnRefreshListener(this);
 //        Animation animation = AnimationUtils.loadAnimation(this, R.anim.progress_scale);
 //        animation.setDuration(500);
 //        animation.setFillAfter(true);
@@ -169,42 +192,26 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
 //        }
 //    }
 
-    @Override
-    public void initLists() {
-        list = (RecyclerView) findViewById(R.id.list);
-        list.setLayoutManager(new LinearLayoutManager(this));
-        dataList = new ArrayList<>();
-        adapter = new NewsAdapter(this, dataList);
-        this.list.setAdapter(adapter);
-
-        list.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
-
-    }
-
-    @Override
-    public void refresh(NewsInteractor.NewsBean data) {
-        if (null != data && data.getNewsInfos().size()>0){
-            dataList.clear();
-            dataList.addAll(data.getNewsInfos());
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        page = 1;
-        iMainPresenter.getList(page);
-    }
+//    @Override
+//    public void initLists() {
+//        list = (RecyclerView) findViewById(R.id.list);
+//        list.setLayoutManager(new LinearLayoutManager(this));
+//        dataList = new ArrayList<>();
+//        adapter = new NewsAdapter(this, dataList);
+//        this.list.setAdapter(adapter);
+//
+//        list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//            }
+//        });
+//    }
 
     @Override
     public void showLoading(String msg) {
@@ -224,6 +231,43 @@ public class MainActivity extends BaseActivity implements IMainActivity, SwipeRe
         refresh.setRefreshing(false);
 //        super.hideLoading();
     }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.drawer_nav_one:
+                showFragment(NewsFragment.class.getName(), newsFragment);
+                break;
+            case R.id.drawer_nav_two:
+                showFragment(MapFragment.class.getName(), mapFragment);
+                break;
+        }
+        menuItem.setChecked(true);
+        drawer.closeDrawers();
+        return false;
+    }
+
+    private void showFragment(String fragmentTag, BaseFragment fragment) {
+        if(null != getSupportFragmentManager().findFragmentByTag(fragmentTag)){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
+                    .show(getSupportFragmentManager().findFragmentByTag(fragmentTag));
+            for (BaseFragment frag :
+                    fragments) {
+                if (frag.getClass() != fragment.getClass()){
+                    ft.hide(frag);
+                }
+            }
+            ft.commit();
+        }/*else{
+            getSupportFragmentManager().beginTransaction()
+                    .add(FragmentFactory.getFragment(fragmentId), fragmentTag)
+                    .show(FragmentFactory.getFragment(fragmentId))
+                    .hide(FragmentFactory.getFragment(Constants.FRAGMENT_NEWS))
+                    .commit();
+        }*/
+
+    }
+
 
     //    @Override
 //    public void showLoginDialog() {
