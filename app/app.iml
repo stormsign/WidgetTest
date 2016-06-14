@@ -109,6 +109,7 @@
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="retrofit-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="glide-3.7.0" level="project" />
+    <orderEntry type="library" exported="" name="AMap_Location_V2.2.0_20151222" level="project" />
     <orderEntry type="module" module-name="materialloadingprogressbar" exported="" />
   </component>
 </module>

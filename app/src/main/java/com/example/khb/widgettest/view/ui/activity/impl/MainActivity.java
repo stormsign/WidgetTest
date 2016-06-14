@@ -213,24 +213,24 @@ public class MainActivity extends BaseActivity implements IMainActivity, Navigat
 //        });
 //    }
 
-    @Override
-    public void showLoading(String msg) {
-        if (!refresh.isRefreshing()) {
-            refresh.post(new Runnable() {
-                @Override
-                public void run() {
-                    refresh.setRefreshing(true);
-                }
-            });
-        }
-//        super.showLoading("载入中");/**/
-    }
-
-    @Override
-    public void hideLoading() {
-        refresh.setRefreshing(false);
-//        super.hideLoading();
-    }
+//    @Override
+//    public void showLoading(String msg) {
+//        if (!refresh.isRefreshing()) {
+//            refresh.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    refresh.setRefreshing(true);
+//                }
+//            });
+//        }
+////        super.showLoading("载入中");/**/
+//    }
+//
+//    @Override
+//    public void hideLoading() {
+//        refresh.setRefreshing(false);
+////        super.hideLoading();
+//    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
