@@ -1,12 +1,14 @@
 package com.example.khb.widgettest.interactor;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.LatLng;
 import com.example.khb.widgettest.interactor.interf.IMapInteractor;
+import com.example.khb.widgettest.service.LongConnectionService;
 
 import java.util.List;
 
@@ -45,6 +47,8 @@ public class MapInteractor implements IMapInteractor {
 
     @Override
     public List<LatLng> receiveCoordinates(Context context) {
+        Intent startService = new Intent(context, LongConnectionService.class);
+        context.startService(startService);
         return null;
     }
 

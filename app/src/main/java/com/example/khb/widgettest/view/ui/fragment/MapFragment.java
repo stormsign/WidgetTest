@@ -13,6 +13,7 @@ import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
+import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.services.geocoder.GeocodeResult;
@@ -32,7 +33,7 @@ import java.util.TimerTask;
 /**
  * Created by khb on 2016/6/13.
  */
-public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSearch.OnGeocodeSearchListener, View.OnClickListener {
+public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSearch.OnGeocodeSearchListener, View.OnClickListener, AMap.CancelableCallback {
 
 
     private IMapPresenter mapPresenter;
@@ -40,7 +41,8 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     private Bundle bundle;
     private AMap aMap;
     private MarkerOptions markerOptions;
-    private LatLng latLng;
+    private LatLng userLocation;
+    private boolean isFixZoom = true;   //定位用户位置时，是否固定显示缩放比
 
 
     @Override
@@ -131,46 +133,63 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 
     @Override
     public void findLocation(LatLng latLng) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.changeLatLng(latLng);
-        aMap.moveCamera(cameraUpdate);
+        if (null != latLng) {
+            userLocation = latLng;
+            CameraUpdate cameraUpdate = null;
+            if (isFixZoom) {
+                CameraPosition cameraPosition = new CameraPosition(latLng, 20, 0, 30);
+                cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+            }else{
+                cameraUpdate = CameraUpdateFactory.changeLatLng(latLng);
+            }
+            markerOptions = new MarkerOptions();
+            markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
+            aMap.clear();
+            aMap.addMarker(markerOptions);
+            aMap.animateCamera(cameraUpdate, 500, this);
+        }
     }
 
     @Override
     public void showLocation(LatLng latLng) {
-        L.i("===== showLocation =====");
+//        L.i("===== showLocation =====");
 //        CameraPosition cameraPosition = new CameraPosition(latLng, 20, 0, 30);
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.changeLatLng(latLng);
-        markerOptions = new MarkerOptions();
-        markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
-        aMap.clear();
-        aMap.addMarker(markerOptions);
-        aMap.moveCamera(cameraUpdate);
+        if (null != userLocation) {
+            markerOptions = new MarkerOptions();
+            markerOptions.position(userLocation).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
+            aMap.addMarker(markerOptions);
+//            aMap.moveCamera(cameraUpdate);
+        }
     }
 
     @Override
     public void showCoordinates(final List<LatLng> latLngList) {
-        latLng = new LatLng(22.5416746181, 114.0851537873);
+//        latLng = new LatLng(22.5416746181, 114.0851537873);
 //        markerOptions = new MarkerOptions();
 //        markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher));
 //        aMap.addMarker(markerOptions);
-
+//        模拟移动
         TimerTask task = new TimerTask() {
             double lat = 22.5416746181;
              double lon = 114.0851537873;
              double offLat = 0.00002;
              double offLon = 0.00001;
+            double l1Lat = lat;
+            double l1Lon = lon;
+            double l2Lat = lat;
+            double l2Lon = lon;
             @Override
             public void run() {
                 latLngList.clear();
 //                LatLng l1 = new LatLng(lat, lon);
-                lat+=offLat;
-                lon+=offLon;
-                LatLng l2 = new LatLng(lat, lon);
-                LatLng l3 = new LatLng(lat, lon);
+                l1Lat+=offLat;
+                LatLng l1 = new LatLng(l1Lat, l1Lon);
+                l2Lon+=offLon;
+                LatLng l2 = new LatLng(l2Lat, l2Lon);
 //                latLngList.add(l1);
+                latLngList.add(l1);
                 latLngList.add(l2);
-                latLngList.add(l3);
                 Message msg = new Message();
                 msg.obj = latLngList;
                 handler.sendMessage(msg);
@@ -180,7 +199,6 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 
         Timer timer = new Timer();
         timer.schedule(task, 0, 1000);
-
 //        if (null==latLngList){ return ;}
     }
 
@@ -188,9 +206,10 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            L.i("====== handle =======");
+//            L.i("====== handle =======");
             List<LatLng> list = (List<LatLng>) msg.obj;
             aMap.clear();
+            showLocation(userLocation);
             for (int i=0; i<list.size(); i++){
                 markerOptions = new MarkerOptions();
                 markerOptions.position(list.get(i)).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher));
@@ -201,12 +220,18 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 
     @Override
     public void onClick(View v) {
-//        final double lat = 22.5416746181;
-//        final double lon = 114.0851537873;
-//        final double offLat = 0.0002;
-//        final double offLon = 0.0001;
+        isFixZoom = false;
+        mapPresenter.getLocation(mContext);
+    }
 
+//    地图移动结束后
+    @Override
+    public void onFinish() {
 
+    }
+//  地图移动取消时
+    @Override
+    public void onCancel() {
 
     }
 

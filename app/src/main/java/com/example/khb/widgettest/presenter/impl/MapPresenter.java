@@ -48,7 +48,8 @@ public class MapPresenter implements IMapPresenter, AMapLocationListener {
                 aMapLocation.getLongitude();//经度
                 L.i("==== "+aMapLocation.getLatitude()+" : "+aMapLocation.getLongitude()+" ====");
                 LatLng latLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-                mapFragment.showLocation(latLng);
+//                mapFragment.showLocation(latLng);
+                mapFragment.findLocation(latLng);
             }
         }
     }

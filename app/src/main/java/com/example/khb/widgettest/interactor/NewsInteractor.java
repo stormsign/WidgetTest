@@ -28,18 +28,6 @@ public class NewsInteractor implements INewsInteractor {
         if (null != mOnLoadCallBack){
             mOnLoadCallBack.onPreLoad(null);
         }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(3000);
-                        L.i("====thread awake====");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
         Map<String, Object> params = new HashMap<>();
         params.put("propertyId",4);
         params.put("page", 1);
