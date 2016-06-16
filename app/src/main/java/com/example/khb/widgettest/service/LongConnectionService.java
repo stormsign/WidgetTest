@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import com.example.khb.widgettest.utils.L;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
 
 /**
@@ -56,16 +55,16 @@ public class LongConnectionService extends Service {
             e.printStackTrace();
         }
         while (socket.isConnected()){
-            L.i("==== socket is connected");
-            try {
-                InputStream is = socket.getInputStream();
-                byte[] bytes = new byte[4*1024];
-                is.read(bytes);
-                String str = new String(bytes);
-                L.i("===== data from socket : "+str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            L.i("==== socket is connected");
+//            try {
+//                InputStream is = socket.getInputStream();
+//                byte[] bytes = new byte[4*1024];
+//                is.read(bytes);
+//                String str = new String(bytes);
+//                L.i("===== data from socket : "+str);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
 
     }

@@ -1,14 +1,12 @@
 package com.example.khb.widgettest.interactor;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.LatLng;
 import com.example.khb.widgettest.interactor.interf.IMapInteractor;
-import com.example.khb.widgettest.service.LongConnectionService;
 
 import java.util.List;
 
@@ -36,6 +34,7 @@ public class MapInteractor implements IMapInteractor {
 //        设置定位模式为高精度模式，battery_saving为低功耗模式，device_sensors是仅设备模式
         aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         aMapLocationClientOption.setOnceLocation(true);
+//        aMapLocationClientOption.setInterval(2000); //定位间隔2秒
         aMapLocationClient.setLocationOption(aMapLocationClientOption);
 // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
 // 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
@@ -47,8 +46,8 @@ public class MapInteractor implements IMapInteractor {
 
     @Override
     public List<LatLng> receiveCoordinates(Context context) {
-        Intent startService = new Intent(context, LongConnectionService.class);
-        context.startService(startService);
+//        Intent startService = new Intent(context, LongConnectionService.class);
+//        context.startService(startService);
         return null;
     }
 

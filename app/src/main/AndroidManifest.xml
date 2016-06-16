@@ -27,6 +27,7 @@
             android:name="com.amap.api.v2.apikey"
             android:value="f7497c012cdeb1f6a535def84712bd22" />
 
+        <!-- 主界面 -->
         <activity
             android:name=".view.ui.activity.impl.MainActivity"
             android:label="@string/app_name" >
@@ -36,6 +37,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".view.ui.activity.impl.PayDemoActivity"
+            android:label="@string/app_name" />
+
+        <!-- 支付宝对接相关 开始 -->
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind" >
+        </activity>
+        <activity
+            android:name="com.alipay.sdk.auth.AuthActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind" >
+        </activity>
+        <!-- 支付宝对接相关 结束 -->
+
+
+
 
         <service android:name="com.amap.api.location.APSService"></service>
         <service android:name=".service.LongConnectionService"></service>

@@ -69,6 +69,7 @@ public class NewsFragment extends BaseFragment implements INewsFragment, SwipeRe
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
+
         newsPresenter.getLists(page);
     }
 

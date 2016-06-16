@@ -50,6 +50,9 @@ public class MapPresenter implements IMapPresenter, AMapLocationListener {
                 LatLng latLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
 //                mapFragment.showLocation(latLng);
                 mapFragment.findLocation(latLng);
+//                if (mapFragment.isFixZoom() != false){
+//                    mapFragment.setIsFixZoom(false);
+//                }
             }
         }
     }

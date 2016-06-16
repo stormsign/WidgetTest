@@ -1,5 +1,6 @@
 package com.example.khb.widgettest.view.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +16,9 @@ import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.maps2d.model.PolylineOptions;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeResult;
@@ -26,6 +29,7 @@ import com.example.khb.widgettest.utils.L;
 import com.example.khb.widgettest.view.ui.base.BaseFragment;
 import com.example.khb.widgettest.view.ui.fragment.interf.IMapFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,8 +46,24 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     private AMap aMap;
     private MarkerOptions markerOptions;
     private LatLng userLocation;
+    private List<LatLng> currentList;
+    private List<LatLng> lastList = new ArrayList<>();
+    private boolean isFirst = true;
+    private List<Marker> markers = new ArrayList<>();
+
+    @Override
+    public boolean isFixZoom() {
+        return isFixZoom;
+    }
+
+    @Override
+    public void setIsFixZoom(boolean isFixZoom) {
+        this.isFixZoom = isFixZoom;
+    }
+
     private boolean isFixZoom = true;   //定位用户位置时，是否固定显示缩放比
 
+    private LatLng lastLocation;  //上一个坐标
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,6 +155,9 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     public void findLocation(LatLng latLng) {
         if (null != latLng) {
             userLocation = latLng;
+            if (null==lastLocation){
+                lastLocation = userLocation;
+            }
             CameraUpdate cameraUpdate = null;
             if (isFixZoom) {
                 CameraPosition cameraPosition = new CameraPosition(latLng, 20, 0, 30);
@@ -147,6 +170,7 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
             aMap.clear();
             aMap.addMarker(markerOptions);
             aMap.animateCamera(cameraUpdate, 500, this);
+//            drawMovement(userLocation);
         }
     }
 
@@ -172,9 +196,9 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 //        模拟移动
         TimerTask task = new TimerTask() {
             double lat = 22.5416746181;
-             double lon = 114.0851537873;
-             double offLat = 0.00002;
-             double offLon = 0.00001;
+            double lon = 114.0851537873;
+            double offLat = 0.00002;
+            double offLon = 0.00001;
             double l1Lat = lat;
             double l1Lon = lon;
             double l2Lat = lat;
@@ -198,7 +222,7 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
         };
 
         Timer timer = new Timer();
-        timer.schedule(task, 0, 1000);
+        timer.schedule(task, 0, 3000);
 //        if (null==latLngList){ return ;}
     }
 
@@ -207,16 +231,49 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 //            L.i("====== handle =======");
-            List<LatLng> list = (List<LatLng>) msg.obj;
-            aMap.clear();
-            showLocation(userLocation);
-            for (int i=0; i<list.size(); i++){
-                markerOptions = new MarkerOptions();
-                markerOptions.position(list.get(i)).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher));
-                aMap.addMarker(markerOptions);
+            currentList = (List<LatLng>) msg.obj;
+            if (isFirst){
+                lastList.addAll(currentList);
             }
+//            aMap.clear();
+            showLocation(userLocation);
+            for (int i=0; i< currentList.size(); i++){
+                Marker marker = null;
+                if (isFirst) {
+                    L.i("==== marker first initiate");
+                    markerOptions = new MarkerOptions();
+                    markerOptions.position(currentList.get(i)).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
+                    markerOptions.zIndex(10);
+                    aMap.addMarker(markerOptions);
+//                    marker = aMap.addMarker(markerOptions);
+//                    markers.add(marker);
+                }/*else{
+//                    marker = markers.get(i);
+//                    marker.setPosition(currentList.get(i));
+//                }*/
+                L.i("======= " + lastList.get(i).toString() + " -- " + currentList.get(i)+" ======");
+                PolylineOptions polylineOptions = new PolylineOptions();
+                polylineOptions.add(lastList.get(i), currentList.get(i))
+                        .width(5).geodesic(true)
+                        .color(Color.GREEN);
+                aMap.addPolyline(polylineOptions);
+            }
+            lastList.clear();
+            lastList.addAll(currentList);
+            isFirst = false;
         }
     };
+
+    @Override
+    public void drawMovement(LatLng currentLocation) {
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.add(lastLocation, userLocation)
+                .width(5).geodesic(true)
+                .color(Color.GREEN);
+        aMap.addPolyline(polylineOptions);
+        lastLocation = userLocation;
+        userLocation = null;
+    }
 
     @Override
     public void onClick(View v) {
@@ -238,5 +295,24 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 //    public void locate(View view){
 //        mapPresenter.getLocation(mContext);
 //    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
 
 }
