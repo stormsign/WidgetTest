@@ -49,7 +49,8 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     private List<LatLng> currentList;
     private List<LatLng> lastList = new ArrayList<>();
     private boolean isFirst = true;
-    private List<Marker> markers = new ArrayList<>();
+    private List<Marker>  markers = new ArrayList<>();
+    private Marker myMarker;
 
     @Override
     public boolean isFixZoom() {
@@ -168,7 +169,7 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
             markerOptions = new MarkerOptions();
             markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
             aMap.clear();
-            aMap.addMarker(markerOptions);
+            myMarker = aMap.addMarker(markerOptions);
             aMap.animateCamera(cameraUpdate, 500, this);
 //            drawMovement(userLocation);
         }
@@ -190,15 +191,22 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     @Override
     public void showCoordinates(final List<LatLng> latLngList) {
 //        latLng = new LatLng(22.5416746181, 114.0851537873);
-//        markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher));
-//        aMap.addMarker(markerOptions);
+        final double lat = 22.5416746181;
+        final double lon = 114.0851537873;
+        final double offLat = 0.00002;
+        final double offLon = 0.00001;
+        latLngList.add(new LatLng(lat,lon));
+        latLngList.add(new LatLng(lat,lon));
+//        for (LatLng latlng :
+//                latLngList) {
+            markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(lat,lon)).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
+            aMap.addMarker(markerOptions);
+//            markers.add();
+//        }
+
 //        模拟移动
         TimerTask task = new TimerTask() {
-            double lat = 22.5416746181;
-            double lon = 114.0851537873;
-            double offLat = 0.00002;
-            double offLon = 0.00001;
             double l1Lat = lat;
             double l1Lon = lon;
             double l2Lat = lat;
@@ -215,9 +223,13 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
                 latLngList.add(l1);
                 latLngList.add(l2);
                 Message msg = new Message();
+                msg.what = 1;
                 msg.obj = latLngList;
                 handler.sendMessage(msg);
-
+                Message msg2 = new Message();
+                msg2.what = 2;
+                msg2.obj = latLngList;
+                handler.sendMessage(msg2);
             }
         };
 
@@ -226,41 +238,56 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 //        if (null==latLngList){ return ;}
     }
 
+    public void drawTracks(List<LatLng> lastList, List<LatLng> currentList){
+
+        if (isFirst){
+            lastList.addAll(currentList);
+        }
+//            aMap.clear();
+        showLocation(userLocation);
+        for (int i=0; i< currentList.size(); i++){
+            Marker marker = null;
+//                    L.i("==== marker first initiate");
+
+//            marker = markers.get(i);
+//            marker.setPosition(currentList.get(i));
+            L.i("======= " + lastList.get(i).toString() + " -- " + currentList.get(i)+" ======");
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.add(lastList.get(i), currentList.get(i))
+                    .width(5).geodesic(true)
+                    .color(Color.GREEN);
+            aMap.addPolyline(polylineOptions);
+        }
+        lastList.clear();
+        lastList.addAll(currentList);
+        isFirst = false;
+
+    }
+
+    public void moveMarkers(List<Marker> markers, List<LatLng> currentList){
+        if (markers.size()>0 && markers.size() == currentList.size()){
+            for (int i = 0; i<markers.size(); i++){
+                Marker marker = markers.get(i);
+                marker.setPosition(currentList.get(i));
+            }
+        }
+    }
+
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 //            L.i("====== handle =======");
-            currentList = (List<LatLng>) msg.obj;
-            if (isFirst){
-                lastList.addAll(currentList);
+
+            if (msg.what == 1) {
+                currentList = (List<LatLng>) msg.obj;
+                if (myMarker!=null)
+                    myMarker.setPosition(currentList.get(0));
+                drawTracks(lastList, currentList);
+            }else if (msg.what == 2){
+                moveMarkers(markers, currentList);
             }
-//            aMap.clear();
-            showLocation(userLocation);
-            for (int i=0; i< currentList.size(); i++){
-                Marker marker = null;
-                if (isFirst) {
-                    L.i("==== marker first initiate");
-                    markerOptions = new MarkerOptions();
-                    markerOptions.position(currentList.get(i)).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
-                    markerOptions.zIndex(10);
-                    aMap.addMarker(markerOptions);
-//                    marker = aMap.addMarker(markerOptions);
-//                    markers.add(marker);
-                }/*else{
-//                    marker = markers.get(i);
-//                    marker.setPosition(currentList.get(i));
-//                }*/
-                L.i("======= " + lastList.get(i).toString() + " -- " + currentList.get(i)+" ======");
-                PolylineOptions polylineOptions = new PolylineOptions();
-                polylineOptions.add(lastList.get(i), currentList.get(i))
-                        .width(5).geodesic(true)
-                        .color(Color.GREEN);
-                aMap.addPolyline(polylineOptions);
-            }
-            lastList.clear();
-            lastList.addAll(currentList);
-            isFirst = false;
         }
     };
 
