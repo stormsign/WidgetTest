@@ -54,7 +54,7 @@ public class LongConnectionService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        while (socket.isConnected()){
+//        while (socket.isConnected()){
 //            L.i("==== socket is connected");
 //            try {
 //                InputStream is = socket.getInputStream();
@@ -65,7 +65,7 @@ public class LongConnectionService extends Service {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-        }
+//        }
 
     }
 

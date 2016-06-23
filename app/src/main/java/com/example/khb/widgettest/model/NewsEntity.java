@@ -1,9 +1,11 @@
 package com.example.khb.widgettest.model;
 
+import java.io.Serializable;
+
 /**
  * Created by khb on 2016/6/6.
  */
-public class NewsEntity{
+public class NewsEntity implements Serializable{
 
     String id;
     String title;

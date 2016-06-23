@@ -7,23 +7,24 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.LatLng;
 import com.example.khb.widgettest.interactor.MapInteractor;
 import com.example.khb.widgettest.interactor.interf.IMapInteractor;
+import com.example.khb.widgettest.listener.OnLoadCallBack;
+import com.example.khb.widgettest.model.Position;
 import com.example.khb.widgettest.presenter.IMapPresenter;
 import com.example.khb.widgettest.utils.L;
 import com.example.khb.widgettest.view.ui.fragment.interf.IMapFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by khb on 2016/6/13.
  */
-public class MapPresenter implements IMapPresenter, AMapLocationListener {
+public class MapPresenter implements IMapPresenter, AMapLocationListener, OnLoadCallBack {
 
     private IMapFragment mapFragment;
     private IMapInteractor mapInteractor;
     public MapPresenter(IMapFragment mapFragment) {
         this.mapFragment = mapFragment;
-        mapInteractor = new MapInteractor(this);
+        mapInteractor = new MapInteractor(this, this);
     }
 
 
@@ -34,9 +35,7 @@ public class MapPresenter implements IMapPresenter, AMapLocationListener {
 
     @Override
     public void getCoordinates(Context context) {
-        List<LatLng> list =  mapInteractor.receiveCoordinates(context);
-        list = new ArrayList<>();
-        mapFragment.showCoordinates(list);
+//        mapInteractor.receiveCoordinates(context);
     }
 
     @Override
@@ -53,8 +52,26 @@ public class MapPresenter implements IMapPresenter, AMapLocationListener {
 //                if (mapFragment.isFixZoom() != false){
 //                    mapFragment.setIsFixZoom(false);
 //                }
+                mapInteractor.receiveCoordinates(null, latLng);
             }
         }
     }
 
+    @Override
+    public void onPreLoad(String msg) {
+
+    }
+
+
+    @Override
+    public void onLoadSuccess(Object data) {
+        L.i("ok");
+        List<Position> list = ((List<Position>)data);
+        mapFragment.showCoordinates(list);
+    }
+
+    @Override
+    public void onLoadFailed(String msg) {
+        L.i("failed:\n"+msg);
+    }
 }

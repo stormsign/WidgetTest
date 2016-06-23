@@ -12,6 +12,7 @@ import com.example.khb.widgettest.http.OkHttpStack;
 import com.example.khb.widgettest.http.VolleyManager;
 import com.example.khb.widgettest.http.request.UploadRequest;
 import com.example.khb.widgettest.listener.OnLoadCallBack;
+import com.example.khb.widgettest.model.interf.IUserEntity;
 import com.example.khb.widgettest.utils.Util;
 
 import org.json.JSONException;

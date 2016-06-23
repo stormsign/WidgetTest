@@ -1,5 +1,6 @@
 package com.example.khb.widgettest.view.ui.fragment;
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,9 +8,11 @@ import android.view.View;
 
 import com.example.khb.widgettest.R;
 import com.example.khb.widgettest.interactor.NewsInteractor;
+import com.example.khb.widgettest.listener.OnRecyclerItemClickListener;
 import com.example.khb.widgettest.model.NewsEntity;
 import com.example.khb.widgettest.presenter.INewsPresenter;
 import com.example.khb.widgettest.presenter.impl.NewsPresenter;
+import com.example.khb.widgettest.view.ui.activity.impl.NewsDetailActivity;
 import com.example.khb.widgettest.view.ui.adapter.NewsAdapter;
 import com.example.khb.widgettest.view.ui.base.BaseFragment;
 import com.example.khb.widgettest.view.ui.fragment.interf.INewsFragment;
@@ -20,7 +23,7 @@ import java.util.List;
 /**
  * Created by khb on 2016/6/13.
  */
-public class NewsFragment extends BaseFragment implements INewsFragment, SwipeRefreshLayout.OnRefreshListener {
+public class NewsFragment extends BaseFragment implements INewsFragment, SwipeRefreshLayout.OnRefreshListener{
 
     private SwipeRefreshLayout refresh;
     private RecyclerView list;
@@ -57,6 +60,13 @@ public class NewsFragment extends BaseFragment implements INewsFragment, SwipeRe
         dataList = new ArrayList<>();
         adapter = new NewsAdapter(mContext, dataList);
         this.list.setAdapter(adapter);
+
+        list.addOnItemTouchListener(new OnRecyclerItemClickListener(list) {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder childViewHolder, int position) {
+                goToDetail(dataList.get(position));
+            }
+        });
 
         list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -105,5 +115,16 @@ public class NewsFragment extends BaseFragment implements INewsFragment, SwipeRe
     public void hideLoading() {
         super.hideLoading();
         refresh.setRefreshing(false);
+    }
+
+//    @Override
+//    public void onItemClick(RecyclerView.ViewHolder childViewHolder, int position) {
+//        goToDetail(dataList.get(position));
+//    }
+
+    @Override
+    public void goToDetail(NewsEntity news) {
+        mContext.startActivity(new Intent(mContext, NewsDetailActivity.class)
+        .putExtra("news", news));
     }
 }

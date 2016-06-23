@@ -23,6 +23,7 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.example.khb.widgettest.R;
+import com.example.khb.widgettest.model.Position;
 import com.example.khb.widgettest.presenter.IMapPresenter;
 import com.example.khb.widgettest.presenter.impl.MapPresenter;
 import com.example.khb.widgettest.utils.L;
@@ -51,6 +52,18 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     private boolean isFirst = true;
     private List<Marker>  markers = new ArrayList<>();
     private Marker myMarker;
+    private double lat;
+    private double lon;
+    private double offLat;
+    private double offLon;
+    private double l1Lat = lat;
+    private double l1Lon = lon;
+    private double l2Lat = lat;
+    private double l2Lon = lon;
+    private Timer timer;
+
+    private List<Position> currentPositions = new ArrayList<>();
+    private List<Position> lastPositions = new ArrayList<>();
 
     @Override
     public boolean isFixZoom() {
@@ -97,8 +110,8 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 //        aMap.setMyLocationEnabled(true);
 
         L.i("==== mapPresenter.getLocation ====");
-        mapPresenter.getLocation(mContext);
-
+//        mapPresenter.getLocation(mContext);
+//        showCoordinates(null);
         // 自定义系统定位小蓝点
 //        MyLocationStyle myLocationStyle = new MyLocationStyle();
 //        myLocationStyle.myLocationIcon(BitmapDescriptorFactory
@@ -118,12 +131,14 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
                 mapView.getParent().requestDisallowInterceptTouchEvent(true);
             }
         });
+        markerOptions = new MarkerOptions();
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
 //        CameraPosition cameraPosition = new CameraPosition(null, 20, 0, 30);
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         L.i("==== setUpView done ====");
-
-        mapPresenter.getCoordinates(mContext);
-
+        startTracking();
+//        mapPresenter.getCoordinates(mContext);
+//        startTracking();
 //        CameraPosition cameraPosition = new CameraPosition(latLng, 16, 0, 30);
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
 //        aMap.moveCamera(cameraUpdate);
@@ -166,10 +181,9 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
             }else{
                 cameraUpdate = CameraUpdateFactory.changeLatLng(latLng);
             }
-            markerOptions = new MarkerOptions();
-            markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
-            aMap.clear();
-            myMarker = aMap.addMarker(markerOptions);
+            markerOptions.position(latLng);
+//            aMap.clear();
+//            myMarker = aMap.addMarker(markerOptions);
             aMap.animateCamera(cameraUpdate, 500, this);
 //            drawMovement(userLocation);
         }
@@ -189,51 +203,84 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     }
 
     @Override
-    public void showCoordinates(final List<LatLng> latLngList) {
+    public void showCoordinates(final List<Position> positionList) {
 //        latLng = new LatLng(22.5416746181, 114.0851537873);
-        final double lat = 22.5416746181;
-        final double lon = 114.0851537873;
-        final double offLat = 0.00002;
-        final double offLon = 0.00001;
-        latLngList.add(new LatLng(lat,lon));
-        latLngList.add(new LatLng(lat,lon));
-//        for (LatLng latlng :
-//                latLngList) {
-            markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(lat,lon)).icon(BitmapDescriptorFactory.fromResource(R.mipmap.fktx_but_red));
-            aMap.addMarker(markerOptions);
-//            markers.add();
-//        }
+//        lat = 22.5416746181;
+//        lon = 114.0851537873;
+//        offLat = 0.00002;
+//        offLon = 0.00001;
+//        currentList = new ArrayList<>();
+//        currentList.add(new LatLng(lat+offLat, lon));
+//        currentList.add(new LatLng(lat, lon+offLon));
+//        lastList.add(new LatLng(lat+offLat, lon));
+//        lastList.add(new LatLng(lat, lon + offLon));
 
-//        模拟移动
-        TimerTask task = new TimerTask() {
-            double l1Lat = lat;
-            double l1Lon = lon;
-            double l2Lat = lat;
-            double l2Lon = lon;
-            @Override
-            public void run() {
-                latLngList.clear();
-//                LatLng l1 = new LatLng(lat, lon);
-                l1Lat+=offLat;
-                LatLng l1 = new LatLng(l1Lat, l1Lon);
-                l2Lon+=offLon;
-                LatLng l2 = new LatLng(l2Lat, l2Lon);
-//                latLngList.add(l1);
-                latLngList.add(l1);
-                latLngList.add(l2);
-                Message msg = new Message();
-                msg.what = 1;
-                msg.obj = latLngList;
-                handler.sendMessage(msg);
-                Message msg2 = new Message();
-                msg2.what = 2;
-                msg2.obj = latLngList;
-                handler.sendMessage(msg2);
+        aMap.clear();
+        currentPositions.clear();
+        currentPositions.addAll(positionList);
+        if (lastPositions.size()>0){
+            lastPositions.addAll(positionList);
+            for (Position position :
+                    currentPositions) {
+                Marker marker = null;
+                if (position.getLat()>=0&&position.getLon()>=0){
+                    markerOptions.position(new LatLng(position.getLat(), position.getLon()));
+                    marker = aMap.addMarker(markerOptions);
+                    marker.setObject(position.getId());
+                    markers.add(marker);
+                }
+                if (position.getIsShow()!=1){
+                    marker.setVisible(false);
+//                    markers.remove(marker);
+                }
             }
-        };
+//        }else if (lastPositions.size() != currentPositions.size()){
+////            for ()
+        }else {
+            for (Position position :
+                    currentPositions) {
+                Marker marker = null;
+                if (position.getLat()>=0&&position.getLon()>=0){
+                    markerOptions.position(new LatLng(position.getLat(), position.getLon()));
+                    marker = aMap.addMarker(markerOptions);
+                    marker.setObject(position.getId());
+                    markers.add(marker);
+                }
+                if (position.getIsShow()!=1){
+                    marker.setVisible(false);
+//                    markers.remove(marker);
+                }
+            }
+        }
+    }
 
-        Timer timer = new Timer();
+        public void startTracking(){
+//        模拟移动
+            TimerTask task = new TimerTask() {
+
+                    @Override
+                    public void run() {
+                mapPresenter.getLocation(mContext);
+                        /*currentList.clear();
+                        //                LatLng l1 = new LatLng(lat, lon);
+                        l1Lat+=offLat;
+                        LatLng l1 = new LatLng(l1Lat, l1Lon);
+                        l2Lon+=offLon;
+                        LatLng l2 = new LatLng(l2Lat, l2Lon);
+                        //                latLngList.add(l1);
+                        currentList.add(l1);
+                        currentList.add(l2);
+                        Message msg = new Message();
+                        msg.what = 1;
+                        msg.obj = currentList;
+                        handler.sendMessage(msg);
+                        Message msg2 = new Message();
+                        msg2.what = 2;
+                        msg2.obj = currentList;
+                        handler.sendMessage(msg2);*/
+                    }
+        };
+            timer = new Timer();
         timer.schedule(task, 0, 3000);
 //        if (null==latLngList){ return ;}
     }
@@ -251,7 +298,7 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 
 //            marker = markers.get(i);
 //            marker.setPosition(currentList.get(i));
-            L.i("======= " + lastList.get(i).toString() + " -- " + currentList.get(i)+" ======");
+            L.i("======= " + lastList.get(i) + " -- " + currentList.get(i)+" ======");
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.add(lastList.get(i), currentList.get(i))
                     .width(5).geodesic(true)
@@ -282,11 +329,14 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
 
             if (msg.what == 1) {
                 currentList = (List<LatLng>) msg.obj;
-                if (myMarker!=null)
-                    myMarker.setPosition(currentList.get(0));
-                drawTracks(lastList, currentList);
-            }else if (msg.what == 2){
+//                if (myMarker!=null)
+//                    myMarker.setPosition(currentList.get(0));
                 moveMarkers(markers, currentList);
+                drawTracks(lastList, currentList);
+                lastList.clear();
+                lastList.addAll(currentList);
+            }else if (msg.what == 2){
+
             }
         }
     };
@@ -340,6 +390,8 @@ public class MapFragment extends BaseFragment implements IMapFragment, GeocodeSe
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        if (timer!=null)
+            timer.cancel();
     }
 
 }

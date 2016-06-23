@@ -1,16 +1,16 @@
 package com.example.khb.widgettest.view.ui.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.khb.widgettest.R;
 import com.example.khb.widgettest.model.NewsEntity;
-import com.example.khb.widgettest.view.ui.activity.impl.PayDemoActivity;
 
 import java.util.List;
 
@@ -28,16 +28,22 @@ public class NewsAdapter extends RecyclerView.Adapter implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        context.startActivity(new Intent(context, PayDemoActivity.class));
+//        context.startActivity(new Intent(context, PayDemoActivity.class));
+//        context.startActivity(new Intent(context, NewsDetailActivity.class)
+//        .putExtra("news"));
     }
 
     public class NewsHolder extends RecyclerView.ViewHolder{
         TextView news;
+        ImageView newsImage;
         public NewsHolder(View itemView) {
             super(itemView);
             news = (TextView) itemView.findViewById(R.id.news);
+            newsImage = (ImageView) itemView.findViewById(R.id.newsImage);
         }
     }
+
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -50,7 +56,7 @@ public class NewsAdapter extends RecyclerView.Adapter implements View.OnClickLis
             String str = list.get(position).getTitle();
             NewsHolder newsholder = (NewsHolder)holder;
             newsholder.news.setText(str);
-
+            Glide.with(context).load(list.get(position).getImage()).error(R.mipmap.ic_launcher).into(newsholder.newsImage);
             newsholder.news.setOnClickListener(this);
 
         }

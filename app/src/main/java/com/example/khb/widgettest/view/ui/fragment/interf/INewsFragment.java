@@ -1,6 +1,7 @@
 package com.example.khb.widgettest.view.ui.fragment.interf;
 
 import com.example.khb.widgettest.interactor.NewsInteractor;
+import com.example.khb.widgettest.model.NewsEntity;
 import com.example.khb.widgettest.view.ui.base.BaseView;
 
 /**
@@ -9,4 +10,5 @@ import com.example.khb.widgettest.view.ui.base.BaseView;
 public interface INewsFragment extends BaseView {
     void initViews();
     void refresh(NewsInteractor.NewsBean data);
+    void goToDetail(NewsEntity news);
 }

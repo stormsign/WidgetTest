@@ -1,4 +1,4 @@
-package com.example.khb.widgettest.model;
+package com.example.khb.widgettest.model.interf;
 
 import android.content.Context;
 

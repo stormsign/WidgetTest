@@ -6,9 +6,16 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.LatLng;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.khb.widgettest.http.VolleyManager;
 import com.example.khb.widgettest.interactor.interf.IMapInteractor;
+import com.example.khb.widgettest.listener.OnLoadCallBack;
+import com.example.khb.widgettest.model.Position;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by khb on 2016/6/14.
@@ -19,9 +26,11 @@ public class MapInteractor implements IMapInteractor {
     private AMapLocationClientOption aMapLocationClientOption;
     private AMapLocationClient aMapLocationClient;
     private AMapLocationListener listener;
+    private OnLoadCallBack onLoadListener;
 
-    public MapInteractor(AMapLocationListener listener){
+    public MapInteractor(AMapLocationListener listener, OnLoadCallBack onLoadListener){
         this.listener = listener;
+        this.onLoadListener = onLoadListener;
     }
 
 
@@ -45,10 +54,68 @@ public class MapInteractor implements IMapInteractor {
     }
 
     @Override
-    public List<LatLng> receiveCoordinates(Context context) {
+    public void receiveCoordinates(Context context, LatLng latLng) {
 //        Intent startService = new Intent(context, LongConnectionService.class);
 //        context.startService(startService);
-        return null;
+
+
+
+        String url = "http://192.168.1.117:8080/app/positionList";
+        Map<String, Object> params = new HashMap<>();
+        params.put("saleId", "89eee5c4-4ea9-42b1-906b-841d7eb42fa8");
+        params.put("lon", latLng.longitude);
+        params.put("lat", latLng.latitude);
+        params.put("propertyId", 4);
+        VolleyManager.getInstance().sendGsonRequest("POSITION",
+                url,
+                params,
+                PositionBean.class,
+                new Response.Listener<PositionBean>() {
+                    @Override
+                    public void onResponse(PositionBean response) {
+                        if (onLoadListener != null) {
+                            onLoadListener.onLoadSuccess(response.getPositions());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (onLoadListener != null) {
+                            onLoadListener.onLoadFailed(error.toString());
+                        }
+                    }
+                });
+    }
+
+    public class PositionBean {
+        int code;
+        String msg;
+        List<Position> positions;
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public void setMsg(String msg) {
+            this.msg = msg;
+        }
+
+        public List<Position> getPositions() {
+            return positions;
+        }
+
+        public void setPositions(List<Position> positions) {
+            this.positions = positions;
+        }
     }
 
 }

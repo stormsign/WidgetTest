@@ -1,4 +1,4 @@
-package com.example.khb.widgettest.model;
+package com.example.khb.widgettest.model.interf;
 
 /**
  * Created by khb on 2016/6/6.
