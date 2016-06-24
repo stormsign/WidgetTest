@@ -3,4 +3,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="transitionName_newsTitle">newsTitle</string>
+    <string name="news">新闻</string>
+    <string name="map">地图</string>
+    <string name="gallary">图库</string>
+    <string name="info">信息</string>
 </resources>

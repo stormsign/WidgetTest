@@ -2,4 +2,7 @@
 <resources>
     <color name="primaryDark">#202020</color>
     <color name="secondaryDark">#323232</color>
+    <color name="light_grey">#dddddd</color>
+    <color name="light_yellow">#50ffc400</color>
+    <color name="transWhite">#ffffffff</color>
 </resources>

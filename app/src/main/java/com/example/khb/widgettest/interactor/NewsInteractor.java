@@ -30,7 +30,7 @@ public class NewsInteractor implements INewsInteractor {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("propertyId",4);
-        params.put("page", 1);
+        params.put("page", page);
         params.put("pageSize", 10);
         VolleyManager.getInstance().sendGsonRequest("NEWS",
 //                BASE_URL + "news",

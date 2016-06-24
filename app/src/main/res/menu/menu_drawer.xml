@@ -4,20 +4,20 @@
 
         <item android:id="@+id/drawer_nav_one"
             android:icon="@android:drawable/ic_dialog_email"
-            android:title="News"
+            android:title="@string/news"
             />
 
         <item android:id="@+id/drawer_nav_two"
             android:icon="@android:drawable/ic_dialog_map"
-            android:title="Map"/>
+            android:title="@string/map"/>
 
         <item android:id="@+id/drawer_nav_three"
-            android:icon="@android:drawable/ic_dialog_alert"
-            android:title="Alert"/>
+            android:icon="@android:drawable/ic_dialog_dialer"
+            android:title="@string/gallary"/>
 
         <item android:id="@+id/drawer_nav_four"
             android:icon="@android:drawable/ic_dialog_info"
-            android:title="Info"/>
+            android:title="@string/info"/>
 
     </group>
 

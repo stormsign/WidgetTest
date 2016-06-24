@@ -7,8 +7,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/primaryDark"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/universalMargin"/>
+        android:layout_margin="@dimen/universalMargin"
+        android:transitionName="newsTitle"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
     <TextView android:id="@+id/time"
         android:layout_width="wrap_content"

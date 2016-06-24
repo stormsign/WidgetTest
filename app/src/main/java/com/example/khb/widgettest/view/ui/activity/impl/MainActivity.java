@@ -1,5 +1,6 @@
 package com.example.khb.widgettest.view.ui.activity.impl;
 
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -61,6 +62,11 @@ public class MainActivity extends BaseActivity implements IMainActivity, Navigat
 //
 //    }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void init() {

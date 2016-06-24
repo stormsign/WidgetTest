@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by khb on 2016/6/6.
  */
-public class NewsAdapter extends RecyclerView.Adapter implements View.OnClickListener {
+public class NewsAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<NewsEntity> list;
 
@@ -26,16 +26,9 @@ public class NewsAdapter extends RecyclerView.Adapter implements View.OnClickLis
         this.list = list;
     }
 
-    @Override
-    public void onClick(View v) {
-//        context.startActivity(new Intent(context, PayDemoActivity.class));
-//        context.startActivity(new Intent(context, NewsDetailActivity.class)
-//        .putExtra("news"));
-    }
-
     public class NewsHolder extends RecyclerView.ViewHolder{
-        TextView news;
-        ImageView newsImage;
+        public TextView news;
+        public ImageView newsImage;
         public NewsHolder(View itemView) {
             super(itemView);
             news = (TextView) itemView.findViewById(R.id.news);
@@ -57,7 +50,6 @@ public class NewsAdapter extends RecyclerView.Adapter implements View.OnClickLis
             NewsHolder newsholder = (NewsHolder)holder;
             newsholder.news.setText(str);
             Glide.with(context).load(list.get(position).getImage()).error(R.mipmap.ic_launcher).into(newsholder.newsImage);
-            newsholder.news.setOnClickListener(this);
 
         }
     }
